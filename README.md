@@ -67,10 +67,12 @@ terraform apply
 Terraform outputs the ALB DNS name on success:
 
 ## Outputs:
+should look like:
 ```
 alb_dns = http://nginx-alb-xxxx.il-central-1.elb.amazonaws.com
 ```
-Open that URL in a browser
+Open that URL in a browser 
+
 you should see the NGINX welcome page served from the EC2 instance in the private subnet.
 
 
