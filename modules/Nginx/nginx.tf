@@ -41,19 +41,5 @@ resource "aws_instance" "nginx" {
   }
 
   user_data_replace_on_change = true
-  user_data = <<-EOF
-  #!/bin/bash
-  dnf update -y
-  dnf install -y docker
-  systemctl start docker
-  systemctl enable docker
-
-  cat <<-EOD > Dockerfile
-  FROM nginx:alpine
-  RUN echo "yo this is nginx" > /usr/share/nginx/html/index.html
-  EOD
-
-  docker build -t webimg .
-  docker run -d -p 80:80 --name web webimg
-  EOF
+  user_data_base64 = filebase64("${path.module}/user_data.sh")
 }
