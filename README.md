@@ -46,10 +46,10 @@ The container starts, listening on port 80.
 Security groups allow the ALB to reach port 80; no inbound Internet traffic reaches the EC2 directly.
 
 ## 1 — Clone the code
-
-`git clone https://github.com/persiidan/Moveo_Assignment.git
-cd Moveo_Assignment`
-
+```
+git clone https://github.com/persiidan/Moveo_Assignment.git
+cd Moveo_Assignment
+```
 ## 2 — Initialise Terraform
 ```
 terraform init
