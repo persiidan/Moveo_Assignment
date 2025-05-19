@@ -35,17 +35,21 @@ High-level traffic:
     └── nginx/           # EC2, SG, user-data (installs Docker & builds NGINX image)
 ```
 ## Prerequisites
-*Terraform ≥ 1.6
+* Terraform ≥ 1.6
+* AWS CLI configured with create-vpc permissions
+* Optional: an AWS key pair if you need SSH access to the EC2 instance
 
-*AWS CLI configured with create-vpc permissions
-
-*Optional: an AWS key pair if you need SSH access to the EC2 instance
+### How the NGINX Module Works
+User-data (in modules/nginx/user_data.sh) runs on first boot.
+It installs Docker, then builds the image from the included Dockerfile.
+The container starts, listening on port 80.
+Security groups allow the ALB to reach port 80; no inbound Internet traffic reaches the EC2 directly.
 
 ## 1 — Clone the code
-```
-git clone https://github.com/persiidan/Moveo_Assignment.git
-cd Moveo_Assignment
-```
+
+`git clone https://github.com/persiidan/Moveo_Assignment.git
+cd Moveo_Assignment`
+
 ## 2 — Initialise Terraform
 ```
 terraform init
@@ -68,14 +72,7 @@ alb_dns = http://nginx-alb-xxxx.il-central-1.elb.amazonaws.com
 Open that URL in a browser
 you should see the NGINX welcome page served from the EC2 instance in the private subnet.
 
-### How the NGINX Module Works
-User-data (in modules/nginx/user_data.sh) runs on first boot.
 
-It installs Docker, then builds the image from the included Dockerfile.
-
-The container starts, listening on port 80.
-
-Security groups allow the ALB to reach port 80; no inbound Internet traffic reaches the EC2 directly.
 
 ## Variables You May Override
 | Variable | Default | Description |
@@ -83,7 +80,6 @@ Security groups allow the ALB to reach port 80; no inbound Internet traffic reac
 | aws_region | il-central-1 | Deployment region |
 | vpc_name | nginx-vpc | VPC name tag |
 | app_port | 80 | Container port exposed to the ALB |
-(others in variables.tf)		
 
 # Destroying Everything
 ```
