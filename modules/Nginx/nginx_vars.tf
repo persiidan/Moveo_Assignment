@@ -22,3 +22,8 @@ variable "key_name" {
   type = string
   description = "name of pem key to access the ec2 instance via ssh"
 }
+
+variable "app_port" {
+  type = number
+  description = "Container port exposed to the ALB"
+}

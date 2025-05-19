@@ -8,9 +8,9 @@ resource "aws_vpc_security_group_ingress_rule" "allow_only_alb" {
   description = "Allow HTTP inbound traffic from ALB"
   security_group_id = aws_security_group.Nginx.id
   referenced_security_group_id = var.alb_sg_id
-  from_port = 80
+  from_port = var.app_port
   ip_protocol = "tcp"
-  to_port = 80
+  to_port = var.app_port
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_ssh_from_vpc" {

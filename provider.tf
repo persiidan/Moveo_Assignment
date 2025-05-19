@@ -7,5 +7,5 @@ terraform {
   }
 }
 provider "aws" {
-  region = "il-central-1"
+  region = var.region
 }

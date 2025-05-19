@@ -9,7 +9,7 @@ resource "aws_vpc" "moveo" {
 }
 resource "aws_subnet" "private_az1" {
   vpc_id     = aws_vpc.moveo.id
-  availability_zone = "il-central-1a"
+  availability_zone = "${var.region}a"
   cidr_block = "10.0.1.0/24"
   map_public_ip_on_launch = false
   tags = {
@@ -19,7 +19,7 @@ resource "aws_subnet" "private_az1" {
 # 2 public subnets for alb and high availability
 resource "aws_subnet" "public_nat_subnet" {
   vpc_id     = aws_vpc.moveo.id
-  availability_zone = "il-central-1a"
+  availability_zone = "${var.region}a"
   cidr_block = "10.0.3.0/24"
   map_public_ip_on_launch = true
   tags = {
@@ -29,7 +29,7 @@ resource "aws_subnet" "public_nat_subnet" {
 
 resource "aws_subnet" "public_alb_subnet" {
   vpc_id     = aws_vpc.moveo.id
-  availability_zone = "il-central-1b"
+  availability_zone = "${var.region}b"
   cidr_block = "10.0.4.0/24"
   map_public_ip_on_launch = true
   tags = {

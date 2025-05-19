@@ -1,9 +1,11 @@
 module "networking" {
   source = "./modules/networking"
+  region = var.region
 }
 
 module "nginx" {
   source = "./modules/Nginx"
+  app_port = var.app_port
   ec2_subnet_id = module.networking.PRIVATE_SUBNET_AZ1_ID
   vpc_id = module.networking.VPC_ID
   alb_sg_id = module.load_balancer.ALB_SG_ID
