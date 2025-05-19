@@ -62,10 +62,13 @@ terraform apply
 Terraform outputs the ALB DNS name on success:
 
 ## Outputs:
+```
 alb_dns = http://nginx-alb-xxxx.il-central-1.elb.amazonaws.com
-Open that URL in a browser—you should see the NGINX welcome page served from the EC2 instance in the private subnet.
+```
+Open that URL in a browser
+you should see the NGINX welcome page served from the EC2 instance in the private subnet.
 
-How the NGINX Module Works
+### How the NGINX Module Works
 User-data (in modules/nginx/user_data.sh) runs on first boot.
 
 It installs Docker, then builds the image from the included Dockerfile.
@@ -75,14 +78,17 @@ The container starts, listening on port 80.
 Security groups allow the ALB to reach port 80; no inbound Internet traffic reaches the EC2 directly.
 
 ## Variables You May Override
-|Variable	|Default	|Description|
-|aws_region|	il-central-1|	Deployment region|
-|vpc_name|	nginx-vpc|	VPC name tag|
-|app_port	|80|	Container port exposed to the ALB|
+| Variable | Default | Description |
+|----------|---------|-------------|
+| aws_region | il-central-1 | Deployment region |
+| vpc_name | nginx-vpc | VPC name tag |
+| app_port | 80 | Container port exposed to the ALB |
 (others in variables.tf)		
 
-#Destroying Everything
+# Destroying Everything
+```
 terraform destroy
+```
 All resources—including the VPC—are removed.
 
 # Troubleshooting Tips
