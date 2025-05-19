@@ -17,7 +17,7 @@ High-level traffic:
 
 ## Architecture Diagram
 
-![nginx-vpc diagram](./diagram.png)
+![project diagram](./diagram.png)
 
 ---
 
