@@ -81,10 +81,10 @@ terraform destroy
 All resources—including the VPC—are removed.
 
 # Troubleshooting Tips
-Stuck at “Instance failed health checks” → ensure the container really listens on port 80.
+* Stuck at “Instance failed health checks” → ensure the container really listens on port 80.
 
-Timeout reaching ALB DNS → verify security-group rules in the load_balancer and nginx modules.
+* Timeout reaching ALB DNS → verify security-group rules in the load_balancer and nginx modules.
 
-Need SSH → add your key pair ID to variables.tf and open port 22 from your IP in the EC2 SG.
+* Need SSH → add your key pair ID to variables.tf and open port 22 from your IP in the EC2 SG.
 
 
