@@ -40,10 +40,11 @@ High-level traffic:
 * Optional: an AWS key pair if you need SSH access to the EC2 instance
 
 ### How the NGINX Module Works
-User-data (in modules/nginx/user_data.sh) runs on first boot.
-It installs Docker, then builds the image from the included Dockerfile.
-The container starts, listening on port 80.
-Security groups allow the ALB to reach port 80; no inbound Internet traffic reaches the EC2 directly.
+
+1. **User-data** (`modules/nginx/user_data.sh`) runs on first boot.  
+2. Installs Docker, then **builds** the image from the included `Dockerfile`.  
+3. Starts the container, listening on **port 80**.  
+4. Security groups allow the ALB to reach port 80; **no inbound Internet traffic** can reach the EC2 directly.
 
 ## 1 — Clone the code
 ```
