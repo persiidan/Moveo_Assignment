@@ -35,27 +35,32 @@ High-level traffic:
     └── nginx/           # EC2, SG, user-data (installs Docker & builds NGINX image)
 ```
 ## Prerequisites
-Terraform ≥ 1.6
+*Terraform ≥ 1.6
 
-AWS CLI configured with create-vpc permissions
+*AWS CLI configured with create-vpc permissions
 
-Optional: an AWS key pair if you need SSH access to the EC2 instance
+*Optional: an AWS key pair if you need SSH access to the EC2 instance
 
 ## 1 — Clone the code
+```
 git clone https://github.com/persiidan/Moveo_Assignment.git
 cd Moveo_Assignment
-
+```
 ## 2 — Initialise Terraform
+```
 terraform init
-
+```
 ## 3 — Review (optional but recommended)
+```
 terraform plan
-
+```
 ## 4 — Apply the configuration
+```
 terraform apply
+```
 ↳ confirm with 'yes' when prompted
-
 Terraform outputs the ALB DNS name on success:
+
 ## Outputs:
 alb_dns = http://nginx-alb-xxxx.il-central-1.elb.amazonaws.com
 Open that URL in a browser—you should see the NGINX welcome page served from the EC2 instance in the private subnet.
