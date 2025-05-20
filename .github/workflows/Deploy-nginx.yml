@@ -34,24 +34,24 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init -input=false
 
-      - name: Plan & Apply
+      - name: Terraform Plan
+        id: tf-plan
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
-          echo "Running terraform plan..."
           terraform plan -detailed-exitcode -out=tfplan.binary -input=false
-          code=$?
-          if [ $code -eq 0 ]; then
-            echo "No infrastructure changes detected; skipping apply."
-            exit 0
-          elif [ $code -eq 2 ]; then
-            echo "Changes detected, applying plan..."
-            terraform apply -auto-approve tfplan.binary
-            exit $?
-          else
-            echo "Terraform plan failed with error code $code."
-            exit $code
-          fi
+          echo "plan_exit_code=$?" >> $GITHUB_OUTPUT
 
+      - name: Upload Plan Artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: terraform-plan
+          path: ${{ env.TF_WORKING_DIR }}/tfplan.binary
+
+      - name: Terraform Apply
+        if: steps.tf-plan.outputs.plan_exit_code == '2'
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform apply -auto-approve -input=false tfplan.binary
+        
       - name: Show Outputs
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform output
