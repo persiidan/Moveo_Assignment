@@ -11,9 +11,8 @@ module "vpc" {
   single_nat_gateway = true 
   one_nat_gateway_per_az = false
   create_private_nat_gateway_route = true
-
-
 }
+
 locals {
   private_subnet_id = module.vpc.private_subnets[0]
   public_subnet_1_id = module.vpc.public_subnets[0]
