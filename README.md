@@ -15,6 +15,12 @@ High-level traffic:
 
 ---
 
+## importent notice
+-  The project used image from docker hub (idanpersi/moveo-nginx) - very simple image, I included the Dockerfile
+-  For VPC and networking purposes I used the existing module from (http://github.com/terraform-aws-modules/terraform-aws-vpc)
+-  Updating the Dockerfile will trigger docker-image workflow 
+-  Updating any TF releated file will trigger Deploy-nginx workflow
+
 ## Architecture Diagram
 
 ![project diagram](./diagram.png)
@@ -37,10 +43,6 @@ High-level traffic:
 * Terraform ≥ 1.6
 * AWS CLI configured with create-vpc permissions
 * Optional: an AWS key pair if you need SSH access to the EC2 instance
-
-## importent notice
--  The project used image from docker hub (idanpersi/moveo-nginx) - very simple image, I included the Dockerfile
--  For VPC and networking purposes I used the existing module from (http://github.com/terraform-aws-modules/terraform-aws-vpc)
 
 ### How the NGINX Module Works
 
