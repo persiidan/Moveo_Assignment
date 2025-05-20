@@ -30,7 +30,6 @@ High-level traffic:
 ├── variables.tf
 ├── output.tf
 └── modules/
-    ├── networking/      # VPC, subnets, IGW, NAT Gateway, route tables
     ├── load_balancer/   # ALB, target group, listener, security groups
     └── nginx/           # EC2, SG, user-data (installs Docker & builds NGINX image)
 ```
@@ -40,7 +39,8 @@ High-level traffic:
 * Optional: an AWS key pair if you need SSH access to the EC2 instance
 
 ## importent notice
- -  The project used image from docker hub (idanpersi/moveo-nginx) - very simple image, I included the Dockerfile in this project
+-  The project used image from docker hub (idanpersi/moveo-nginx) - very simple image, I included the Dockerfile
+-  For VPC and networking purposes I used the existing module from (http://github.com/terraform-aws-modules/terraform-aws-vpc)
 
 ### How the NGINX Module Works
 

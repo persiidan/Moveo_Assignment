@@ -1,6 +1,6 @@
-output "ALB_SG_ID" {
+output "alb_sg_id" {
   value = aws_security_group.ALB_sg.id
 }
-output "ALB_DNS" {
+output "alb_dns" {
   value = aws_lb.alb.dns_name
 }
