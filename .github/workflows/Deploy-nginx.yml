@@ -1,12 +1,8 @@
 name: "Terraform Deploy NGINX"
 on:
   push:
-    paths:
-      - "*.tf"
-      - modules/*/*
-    # branches:
-    #   - main
-    # commented out to not trigger every push while working one unrleated files
+     branches:
+      - main
 permissions:
   contents: read
 
