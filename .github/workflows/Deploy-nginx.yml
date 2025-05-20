@@ -48,6 +48,7 @@ jobs:
           path: ${{ env.TF_WORKING_DIR }}/tfplan.binary
 
       - name: Terraform Apply
+        if: steps.tf-plan.outputs.plan_exit_code == '2'
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform apply -auto-approve -input=false tfplan.binary
         
