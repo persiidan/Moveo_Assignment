@@ -19,7 +19,7 @@ High-level traffic:
 -  The project used image from docker hub (idanpersi/moveo-nginx) - very simple image, I included the Dockerfile
 -  For VPC and networking purposes I used the existing module from (http://github.com/terraform-aws-modules/terraform-aws-vpc)
 -  Updating the Dockerfile will trigger docker-image workflow 
--  Updating any TF releated file will trigger Deploy-nginx workflow
+-  Updating any TF releated file (i.e. any *.tf and user_data.sh) will trigger Deploy-nginx workflow
 
 ## Architecture Diagram
 
