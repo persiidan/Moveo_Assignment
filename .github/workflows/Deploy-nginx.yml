@@ -1,8 +1,9 @@
 name: "Terraform Deploy NGINX"
 on:
   push:
-     branches:
-      - main
+    paths:
+      - '**/*.tf'        
+      - '**/user_data.sh' 
 permissions:
   contents: read
 
