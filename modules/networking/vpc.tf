@@ -4,7 +4,7 @@ resource "aws_vpc" "moveo" {
   enable_dns_hostnames = false 
 
   tags = {
-    Name = "nginx-VPC"
+    Name = "moveo-VPC"
   }
 }
 resource "aws_subnet" "private_az1" {

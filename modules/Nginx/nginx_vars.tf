@@ -13,7 +13,7 @@ variable "alb_sg_id" {
     description = "the id of the alb sg, critical for security purposes"
 }
 
-variable "vpc_cidrBlock" {
+variable "vpc_cidr" {
     type = string
     description = "vpc's cidr block to allow internal ssh for managment purposes"
 }

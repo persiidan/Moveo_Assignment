@@ -39,6 +39,9 @@ High-level traffic:
 * AWS CLI configured with create-vpc permissions
 * Optional: an AWS key pair if you need SSH access to the EC2 instance
 
+## importent notice
+ -  The project used image from docker hub (idanpersi/moveo-nginx) - very simple image, I included the Dockerfile in this project
+
 ### How the NGINX Module Works
 
 1. **User-data** (`modules/nginx/user_data.sh`) runs on first boot.  

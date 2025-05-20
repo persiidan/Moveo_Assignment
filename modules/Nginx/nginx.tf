@@ -16,7 +16,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_only_alb" {
 resource "aws_vpc_security_group_ingress_rule" "allow_ssh_from_vpc" {
   description = "Allow SSH inbound traffic from VPC only"
   security_group_id = aws_security_group.Nginx.id
-  cidr_ipv4 = var.vpc_cidrBlock
+  cidr_ipv4 = var.vpc_cidr
   from_port = 22
   ip_protocol = "tcp"
   to_port = 22

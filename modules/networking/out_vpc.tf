@@ -1,16 +1,16 @@
-output "PRIVATE_SUBNET_AZ1_ID" {
+output "private_subnet_az1_id" {
   value = aws_subnet.private_az1.id
 }
-output "VPC_ID" {
+output "vpc_id" {
   value = aws_vpc.moveo.id
 }
-output "VPC_CIDR" {
+output "vpc_cidr" {
   value = aws_vpc.moveo.cidr_block
 }
 
-output "PUBLIC_ALB_SUBNET_ID" {
+output "public_alb_subnet_id" {
   value = aws_subnet.public_alb_subnet.id
 }
-output "PUBLIC_NAT_SUBNET_ID" {
+output "public_nat_subnet_id" {
   value = aws_subnet.public_nat_subnet.id
 }
