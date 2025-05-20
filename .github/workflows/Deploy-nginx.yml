@@ -54,6 +54,5 @@ jobs:
           fi
 
       - name: Show Outputs
-        if: ${{ success() }}
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform output
