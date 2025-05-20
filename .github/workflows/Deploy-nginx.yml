@@ -1,45 +1,4 @@
 name: "Terraform Deploy NGINX"
-
-on:
-  push:
-    branches:
-      - main
-
-permissions:
-  contents: read 
-
-env:
-  AWS_REGION: il-central-1
-  TF_WORKING_DIR: .
-  TF_CLI_ARGS: "-input=false"
-
-jobs:
-  terraform:
-    name: "Terraform deployment steps"
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4.2.2
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.1.0
-        with:
-          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region:            ${{ env.AWS_REGION }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.6.0
-
-      - name: Terraform Init
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init ${{ env.TF_CLI_ARGS }}
-
-    name: "🛠️ Terraform Deploy NGINX"
-
 on:
   push:
     branches:
