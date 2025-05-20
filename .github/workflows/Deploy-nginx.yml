@@ -1,9 +1,12 @@
 name: "Terraform Deploy NGINX"
 on:
   push:
-    branches:
-      - main
-
+    paths:
+      - "*.tf"
+      - modules/*/*
+    # branches:
+    #   - main
+    # commented out to not trigger every push while working one unrleated files
 permissions:
   contents: read
 
@@ -34,21 +37,7 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init -input=false
 
-      - name: Terraform Plan
-        id: tf-plan
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: |
-          terraform plan -detailed-exitcode -out=tfplan.binary -input=false
-          echo "plan_exit_code=$?" >> $GITHUB_OUTPUT
-
-      - name: Upload Plan Artifact
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: terraform-plan
-          path: ${{ env.TF_WORKING_DIR }}/tfplan.binary
-
       - name: Terraform Apply
-        if: steps.tf-plan.outputs.plan_exit_code == '2'
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform apply -auto-approve -input=false tfplan.binary
         
