@@ -38,24 +38,63 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init ${{ env.TF_CLI_ARGS }}
 
-      - name: Terraform Plan
-        id: plan
+    name: "🛠️ Terraform Deploy NGINX"
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+env:
+  AWS_REGION: il-central-1
+  TF_WORKING_DIR: .
+  TF_CLI_ARGS: "-input=false"
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.0
+
+      - name: Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init ${{ env.TF_CLI_ARGS }}
+
+      - name: Plan & Apply
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
-          terraform plan -out=tfplan.binary ${{ env.TF_CLI_ARGS }}
-          terraform show -no-color tfplan.binary > plan.txt
-
-      - name: Upload plan for review
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: terraform-plan
-          path: plan.txt
-
-      - name: Terraform Apply
-        if: ${{ success() }}
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform apply -auto-approve tfplan.binary
+          echo "Running terraform plan..."
+          terraform plan -detailed-exitcode -out=tfplan.binary ${{ env.TF_CLI_ARGS }}
+          code=$?
+          if [ $code -eq 0 ]; then
+            echo "No infrastructure changes detected; skipping apply."
+            exit 0
+          elif [ $code -eq 2 ]; then
+            echo "Changes detected, applying plan..."
+            terraform apply -auto-approve tfplan.binary
+            exit $?
+          else
+            echo "Terraform plan failed with error code $code."
+            exit $code
+          fi
 
       - name: Show Outputs
+        if: ${{ success() }}
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform output
