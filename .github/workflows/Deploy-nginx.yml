@@ -39,7 +39,7 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform apply -auto-approve -input=false tfplan.binary
+        run: terraform apply -auto-approve -input=false
         
       - name: Show Outputs
         working-directory: ${{ env.TF_WORKING_DIR }}
