@@ -10,7 +10,6 @@ permissions:
 env:
   AWS_REGION: il-central-1
   TF_WORKING_DIR: .
-  TF_CLI_ARGS: "-input=false"
 
 jobs:
   terraform:
@@ -33,13 +32,13 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init ${{ env.TF_CLI_ARGS }}
+        run: terraform init -input=false
 
       - name: Plan & Apply
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
           echo "Running terraform plan..."
-          terraform plan -detailed-exitcode -out=tfplan.binary ${{ env.TF_CLI_ARGS }}
+          terraform plan -detailed-exitcode -out=tfplan.binary -input=false
           code=$?
           if [ $code -eq 0 ]; then
             echo "No infrastructure changes detected; skipping apply."
