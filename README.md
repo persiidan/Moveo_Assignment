@@ -20,6 +20,7 @@ High-level traffic:
 -  For VPC and networking purposes I used the existing module from (http://github.com/terraform-aws-modules/terraform-aws-vpc)
 -  Updating the Dockerfile will trigger docker-image workflow 
 -  Updating any TF releated file (i.e. any *.tf and user_data.sh) will trigger Deploy-nginx workflow
+-  The Workflow's Terraform can access my AWS account thanks to a dedicated user with policy to enable access
 
 ## Architecture Diagram
 
