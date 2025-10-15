@@ -1,43 +1,62 @@
 name: "Terraform Deploy NGINX"
 on:
   push:
+    branches:
+      - main
     paths:
-      - '**/*.tf'        
-      - '**/user_data.sh' 
-permissions:
-  contents: read
+      - 'terraform/**'
 
 env:
   AWS_REGION: il-central-1
-  TF_WORKING_DIR: .
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE }}
 
 jobs:
   terraform:
+    name: "Apply Terraform Code changes"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region:            ${{ env.AWS_REGION }}
-
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2.0.3
+        uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.6.0
+          terraform_version: 1.12.0
 
       - name: Terraform Init
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init -input=false
+        id: init
+        run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
+      
+      - name: terraform fmt
+        id: fmt
+        run: terraform fmt -check
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
+      
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -input=false -out planfile
+        continue-on-error: true
+
+        # this step is to make sure if plan exited with error, the workflow should'nt continue and end gracefully
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: |
+          echo "Terraform plan failed. Please check the configuration."
+          exit 1
 
       - name: Terraform Apply
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform apply -auto-approve -input=false
-        
-      - name: Show Outputs
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform output
+        id: apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false -parallelism=1 planfile
+
+      - name: Show website (aplication load balancer) URL
+        run: terraform output alb_dns
