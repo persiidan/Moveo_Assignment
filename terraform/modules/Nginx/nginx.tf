@@ -30,7 +30,7 @@ resource "aws_vpc_security_group_egress_rule" "out_all" {
 }
 
 resource "aws_instance" "nginx" { 
-  ami = "ami-09b5106eeaaad79ec"
+  ami = "ami-09b5106eeaaad79ec" # free tier amazon linux 2023 ami
   instance_type = "t3.micro"
   subnet_id = var.ec2_subnet_id
   key_name = var.key_name
