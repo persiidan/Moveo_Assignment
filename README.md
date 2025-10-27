@@ -5,26 +5,37 @@ This project provisions an AWS environment (region **il-central-1**) with:
 
 | Tier | Resources | Purpose |
 |------|-----------|---------|
-| Network Edge | **Internet Gateway (IGW)** | Allows inbound HTTP and outbound egress |
-| Public Subnets (×2) | • **NAT Gateway** (Subnet-1)<br>• **Application Load Balancer** (spans both) | NAT gives the private subnet one-way Internet access; ALB fronts incoming traffic |
+| Network Edge | **Internet Gateway (IGW)**<br>**AWS WAF** | Allows inbound HTTP and outbound egress; protects ALB with security rules |
+| Public Subnets (×2) | • **NAT Gateway** (Subnet-1)<br>• **Application Load Balancer** (spans both AZs) | NAT gives the private subnet one-way Internet access; ALB fronts incoming traffic |
 | Private Subnet | **EC2** instance running a **Docker-built NGINX** app | Receives traffic from the ALB; egress via NAT only |
+| Backend | **S3 Bucket** (moveoterrabe) | Stores Terraform state remotely for team collaboration |
 
 High-level traffic:
-* **Inbound**  `Internet → IGW → ALB → EC2`
+* **Inbound**  `Internet → IGW → AWS WAF → ALB → EC2`
 * **Outbound** `EC2 → NAT Gateway → Internet`
+
+### Security Features (AWS WAF)
+The ALB is protected by **AWS WAF** with the following rules:
+- ✅ **Rate Limiting**: Max 2,000 requests per IP (returns HTTP 429 when exceeded)
+- ✅ **IP Reputation**: Blocks requests from known malicious IPs (AWS managed list)
+- ✅ **Geo-blocking**: **Only allows traffic from Israel (IL)** - blocks all other countries
+- ✅ **Request Size**: Blocks requests larger than 8KB (returns HTTP 413)
+- ✅ **CloudWatch Monitoring**: All rules send metrics to CloudWatch for visibility
 
 ---
 
-## importent notice
--  The project used image from docker hub (idanpersi/moveo-nginx) - very simple image, I included the Dockerfile
+## Important Notices
+-  The project uses a Docker image from Docker Hub (idanpersi/moveo-nginx) - very simple image, I included the Dockerfile
 -  For VPC and networking purposes I used the existing module from (http://github.com/terraform-aws-modules/terraform-aws-vpc)
+-  **Terraform state is stored in S3**: The backend bucket `moveoterrabe` in il-central-1 stores the Terraform state for team collaboration and state locking
 -  Updating the Dockerfile will trigger docker-image workflow 
--  Updating any TF releated file (i.e. any *.tf and user_data.sh) will trigger Deploy-nginx workflow
+-  Updating any TF related file (i.e. any *.tf and user_data.sh) will trigger Deploy-nginx workflow
 -  The Workflow's Terraform can access my AWS account thanks to a dedicated user with policy to enable access
+-  **Security Note**: Access to the ALB is geo-restricted to Israel only via AWS WAF rules
 
 ## Architecture Diagram
 
-![project diagram](./diagram.png)
+![AWS Infrastructure Architecture](./architecture_diagram.png)
 
 ---
 
@@ -33,12 +44,18 @@ High-level traffic:
 ```
 .
 ├── main.tf
-├── provider.tf
 ├── variables.tf
-├── output.tf
+├── terraform.tf        # Provider config & S3 backend
+├── out.tf              # Outputs (ALB DNS)
 └── modules/
-    ├── load_balancer/   # ALB, target group, listener, security groups
-    └── nginx/           # EC2, SG, user-data (installs Docker & builds NGINX image)
+    ├── load_balancer/  # ALB, target group, listener, security groups, WAF
+    │   ├── alb.tf      # Application Load Balancer configuration
+    │   ├── waf.tf      # AWS WAF rules (rate limiting, geo-blocking, etc.)
+    │   └── ...
+    └── nginx/          # EC2, SG, user-data (installs Docker & runs NGINX)
+        ├── nginx.tf    # EC2 instance configuration
+        ├── user_data.sh # Boot script to install Docker & run container
+        └── ...
 ```
 ## Prerequisites
 * Terraform ≥ 1.6
@@ -81,7 +98,17 @@ Open that URL in a browser
 
 you should see the NGINX welcome page served from the EC2 instance in the private subnet.
 
+> ⚠️ **Note**: Due to AWS WAF geo-blocking rules, **only traffic from Israel (IL) will be allowed**. Requests from other countries will receive an HTTP 403 Forbidden response.
 
+## Testing the WAF Rules
+
+You can test the WAF functionality:
+
+1. **Geo-blocking**: Access the ALB DNS from outside Israel → Should return HTTP 403
+2. **Rate limiting**: Send more than 2,000 requests/minute from the same IP → Should return HTTP 429
+3. **IP Reputation**: Attempts from known malicious IPs → Blocked automatically
+
+Monitor WAF events in CloudWatch metrics: `nginx-alb-waf` namespace
 
 ## Variables You May Override
 | Variable | Default | Description |
@@ -97,10 +124,18 @@ terraform destroy
 All resources—including the VPC—are removed.
 
 # Troubleshooting Tips
-* Stuck at “Instance failed health checks” → ensure the container really listens on port 80.
+* Stuck at "Instance failed health checks" → ensure the container really listens on port 80.
 
 * Timeout reaching ALB DNS → verify security-group rules in the load_balancer and nginx modules.
 
 * Need SSH → add your key pair ID to variables.tf and open port 22 from your IP in the EC2 SG.
+
+* **Getting HTTP 403 Forbidden** → you're likely accessing from outside Israel (WAF geo-blocking in effect)
+
+* **Getting HTTP 429 Too Many Requests** → you've exceeded the 2,000 requests/minute rate limit
+
+* **S3 backend errors** → ensure the S3 bucket `moveoterrabe` exists and you have permissions to read/write Terraform state
+
+* **WAF not working** → verify the WAF web ACL is associated with the ALB in the AWS Console
 
 
