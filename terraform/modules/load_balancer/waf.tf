@@ -103,8 +103,12 @@ resource "aws_wafv2_web_acl" "alb_waf" {
     }
   
     statement {
-      geo_match_statement {
-        country_codes = ["IL"] 
+      not_statement {
+        statement {
+          geo_match_statement {
+            country_codes = ["IL"] 
+          }
+        }
       }
     }
   
