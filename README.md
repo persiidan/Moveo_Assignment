@@ -137,5 +137,3 @@ All resources—including the VPC—are removed.
 * **S3 backend errors** → ensure the S3 bucket `moveoterrabe` exists and you have permissions to read/write Terraform state
 
 * **WAF not working** → verify the WAF web ACL is associated with the ALB in the AWS Console
-
-
